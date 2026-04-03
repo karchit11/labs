@@ -1,33 +1,38 @@
-def json_to_toon(data: list[dict]) -> str:
-    """
-    Convert a list of uniform dicts to TOON format.
-
-    Example:
-        Input:  [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
-        Output:
-            # fields: id, name
-            1 | Alice
-            2 | Bob
-
-    Returns:
-        A single TOON-format string.
-    """
-    # TODO: Extract the field names from the first dict
-    # TODO: Build the header line: "# fields: key1, key2, ..."
-    # TODO: Build each data row: "val1 | val2 | ..."
-    # TODO: Join and return all lines as a string
-    pass
-
+def json_to_toon(data: list) -> str:
+    """Convert a list of dictionaries into a TOON-like pipe-separated format."""
+    if not data:
+        return ""
+    
+    keys = list(data[0].keys())
+    header = "# fields: " + "|".join(keys)
+    
+    rows = [header]
+    for item in data:
+        row = "|".join(str(item.get(k, "")) for k in keys)
+        rows.append(row)
+        
+    return "\n".join(rows)
 
 def count_tokens(text: str) -> int:
-    """
-    A simple proxy for token count: split on whitespace and count words.
-    
-    Args:
-        text: Any string.
+    """Count tokens (words) in a text."""
+    if not text:
+        return 0
+    return len(text.split())
 
-    Returns:
-        Integer word count.
-    """
-    # TODO: Implement this
-    pass
+def to_toon(data: dict) -> str:
+    """As described in README"""
+    pairs = [f"{k}:{v}" for k, v in data.items()]
+    return "[" + "|".join(pairs) + "]"
+
+def from_toon(toon_str: str) -> dict:
+    """As described in README"""
+    toon_str = toon_str.strip("[]")
+    result = {}
+    for pair in toon_str.split("|"):
+        if ":" in pair:
+            k, v = pair.split(":", 1)
+            # Try to infer type
+            if v.isdigit():
+                v = int(v)
+            result[k] = v
+    return result

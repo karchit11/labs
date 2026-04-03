@@ -3,7 +3,7 @@ import requests
 
 def fetch_issues(owner: str, repo: str) -> list:
     """Fetch open issues from a GitHub repository."""
-    url = f"https://api.github.com/repos/{owner}/{repo}/issues?state=open"
+    url = f"https://api.github.com/repos/{owner}/{repo}/issues"
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
